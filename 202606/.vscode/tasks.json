@@ -1,0 +1,22 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Compile Current File to a.out",
+            "type": "shell",
+            "command": "gcc",
+            "args": [
+                "${file}",   // 当前打开的文件
+                "-o",
+                "a.out"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "reveal": "always"
+            }
+        }
+    ]
+}

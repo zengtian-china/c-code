@@ -1,0 +1,3 @@
+﻿  main.c
+D:\code\c\learn-advanced\test\main.c(7,23): warning C4552: '<': 未使用表达式结果
+  test.vcxproj -> D:\code\c\learn-advanced\test\x64\Debug\test.exe
