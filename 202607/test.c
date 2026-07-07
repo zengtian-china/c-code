@@ -1,68 +1,141 @@
-// #include <stdio.h>
-// #include <stdlib.h>
-// #include <string.h>
+/* 键值对 int->string */
+typedef struct {
+    int key;
+    char *val;
+} Pair;
+
+/* 基于数组实现的哈希表 */
+typedef struct {
+    Pair *buckets[MAX_SIZE];
+} ArrayHashMap;
+
+/* 构造函数 */
+ArrayHashMap *newArrayHashMap() {
+    ArrayHashMap *hmap = malloc(sizeof(ArrayHashMap));
+    for (int i=0; i < MAX_SIZE; i++) {
+        hmap->buckets[i] = NULL;
+    }
+    return hmap;
+}
+
+/* 析构函数 */
+void delArrayHashMap(ArrayHashMap *hmap) {
+    for (int i = 0; i < MAX_SIZE; i++) {
+        if (hmap->buckets[i] != NULL) {
+            free(hmap->buckets[i]->val);
+            free(hmap->buckets[i]);
+        }
+    }
+    free(hmap);
+}
+
+/* 添加操作 */
+void put(ArrayHashMap *hmap, const int key, const char *val) {
+    Pair *Pair = malloc(sizeof(Pair));
+    Pair->key = key;
+    Pair->val = malloc(strlen(val) + 1);
+    strcpy(Pair->val, val);
+
+    int index = hashFunc(key);
+    hmap->buckets[index] = Pair;
+}
+
+/* 删除操作 */
+void removeItem(ArrayHashMap *hmap, const int key) {
+    int index = hashFunc(key);
+    free(hmap->buckets[index]->val);
+    free(hmap->buckets[index]);
+    hmap->buckets[index] = NULL;
+}
+
+/* 获取所有键值对 */
+void pairSet(ArrayHashMap *hmap, MapSet *set) {
+    Pair *entries;
+    int i = 0, index = 0;
+    int total = 0;
+    /* 统计有效键值对数量 */
+    for (i = 0; i < MAX_SIZE; i++) {
+        if (hmap->buckets[i] != NULL) {
+            total++;
+        }
+    }
+    entries = malloc(sizeof(Pair) * total);
+    for (i = 0; i < MAX_SIZE; i++) {
+        if (hmap->buckets[i] != NULL) {
+            entries[index].key = hmap->buckets[i]->key;
+            entries[index].val = malloc(strlen(hmap->buckets[i]->val) + 1);
+            strcpy(entries[index].val, hmap->buckets[i]->val);
+            index++;
+        }
+    }
+    set->set = entries;
+    set->len = total;
+}
+
+/* 获取所有键 */
+void keySet(ArrayHashMap *hmap, MapSet *set) {
+    int *keys;
+    int i = 0, index = 0;
+    int total = 0;
+    /* 统计有效键值对数量 */
+    for (i = 0; i < MAX_SIZE; i++) {
+        if (hmap->buckets[i] != NULL) {
+            total++;
+        }
+    }
+    keys = malloc(total * sizeof(int));
+    for (i = 0; i < MAX_SIZE; i++) {
+        if (hmap->buckets[i] != NULL) {
+            keys[index] = hmap->buckets[i]->key;
+            index++;
+        }
+    }
+    set->set = keys;
+    set->len = total;
+}
+
+/* 获取所有值 */
+void valueSet(ArrayHashMap *hmap, MapSet *set) {
+    char **vals;
+    int i = 0, index = 0;
+    int total = 0;
+    /* 统计有效键值对数量 */
+    for (i = 0; i < MAX_SIZE; i++) {
+        if (hmap->buckets[i] != NULL) {
+            total++;
+        }
+    }
+    vals = malloc(total * sizeof(char *));
+    for (i = 0; i < MAX_SIZE; i++) {
+        if (hmap->buckets[i] != NULL) {
+            vals[index] = hmap->buckets[i]->val;
+            index++;
+        }
+    }
+    set->set = vals;
+    set->len = total;
+}
+
+/* 打印哈希表 */
+void print(ArrayHashMap *hmap) {
+    int i;
+    MapSet set;
+    pairSet(hmap, &set);
+    Pair *entries = (Pair *)set.set;
+    for (i = 0; i < set.len; i++) {
+        printf("%d -> %s\n", entries[i].key, entries[i].val);
+    }
+    free(set.set);
+}
 
 
-
-
-// void mainWindow(){
-//     printf("***************************\n");
-//     printf("\n");
-//     printf("          1.登录\n");
-//     printf("          2.注册\n");
-//     printf("\n");
-//     printf("***************************\n");
-// }
-
-// int getInt(){
-//  // 10 ~50
-//     return random()%41+10;
-// }
-// void insert_data(int *data,int size){
-//     for(int i =0; i<size;i++){
-//         data[i] = getInt();
-//     }
-// }
-// void show_data(int number){
-//     printf("%d ",number);
-// }
-
-// void main(int arg,char *arg1[]){
-
-//     // mainWindow();
-//     // printf("%d参数个数 \n",arg);
-//     // for (int i =0;i< arg;i++){
-//     //     printf("第%d个参数的值为%s \n",i,arg1[i]);
-//     // }
-
-  
-//     if (0 == strcmp(arg1[1],"1")){
-//           int a[10];
-//           insert_data(a,sizeof(a)/sizeof(int));
-//           for( int i=0;i<10;i++){
-//             show_data(a[i]);
-//           }
-//           printf("\n");
-
-//     }else{
-//         char a[10];
-//         for(int i =0; i< 10;i++){
-//             a[i] = 'A'+getInt();
-//         }
-//         for (int i = 0; i < 10; i++)
-//         {
-//             printf("%c ",a[i]);
-//         }
-//         printf("\n");
-//     }
-
-// }
-
-
-int main(void){
-    int arr[10] = {0};
-    int *p = arr;
-    // &arr[3]  arr+3
-    // *(p+1) == p[1] ==arr[1]
- // p == arr 
+/* 乘法哈希 */
+int mulHash(char *key) {
+    long long hash = 0;
+    const int MODULUS = 1000000007;
+    //常数  当前 月份  单双 
+    for (int i = 0; i < strlen(key); i++) {
+        hash = (31 * hash + (unsigned char)key[i]) % MODULUS;
+    }
+    return (int)hash;
 }
