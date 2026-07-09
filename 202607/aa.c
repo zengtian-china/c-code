@@ -267,3 +267,19 @@ int main() {
     
     return 0;
 }
+
+
+
+typedef struct no{
+    Node *value;
+    nn *next;
+}nn;
+
+
+typedef struct Node {
+    char name[256];           // 节点名称（文件名或目录名）
+    NodeType type;            // 节点类型
+    struct Node* parent;      // 指向父节点的指针
+    nn* first_child; // 指向第一个子节点的指针
+    // struct Node* next_sibling;// 指向下一个兄弟节点的指针
+} Node;
