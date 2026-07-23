@@ -2,7 +2,7 @@
  * @Author: zengtian
  * @Date: 2026-07-10 08:37:38
  * @LastEditors: zengtian
- * @LastEditTime: 2026-07-10 15:36:07
+ * @LastEditTime: 2026-07-10 18:38:06
  * @Description: File Description
  * @FilePath: \202607\1001文件读写操作.c
  * @@file: 
@@ -40,13 +40,13 @@ void push(int **cc, int *p){
     // fprintf(fp,"hello zengtian");
 
     // fclose(fp);
-    // struct users *user = calloc(1,sizeof(user));
-    // FILE *fp = fopen("wa.txt","r");
-    // fscanf(fp,"%[^|]|%d|%[^|]|%ld",user->uname,&user->age,user->add,&user->phone);
-    // printf("%s %d %s %ld",user->uname,user->age,user->add,user->phone);
+    struct users *user = calloc(1,sizeof(user));
+    FILE *fp = fopen("wa.txt","r");
+    fscanf(fp,"%[^|]|%d|%[^|]|%ld",user->uname,&user->age,user->add,&user->phone);
+    printf("%s %d %s %ld",user->uname,user->age,user->add,user->phone);
 
 
-    // fclose(fp);
+    fclose(fp);
     
 
     // int i =1;
